@@ -1,15 +1,15 @@
-import React from 'react'
-import CategoryItem from '../category-item/CategoryItem'
-import "./directory.scss"
+import React from "react";
+import DirectoryItem from "../directory-item/DirectoryItem";
+import "./directory.scss";
 
-const Directory = ({categories}) => {
-  return (
-    <div className='directory-container'>
-        {categories.map((category)=> (
-            <CategoryItem key={category.id} category={category}/>
-        ))}
-    </div>
-  )
-}
+const Directory = ({ categories }) => {
+	return (
+		<div className="directory-container">
+			{categories.map((category) => (
+				<DirectoryItem key={category.id} category={category} />
+			))}
+		</div>
+	);
+};
 
-export default Directory
+export default Directory;

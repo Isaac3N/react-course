@@ -14,9 +14,11 @@ import {
 	getFirestore,
 	doc,
 	getDoc,
+	getDocs,
 	setDoc,
 	collection,
 	writeBatch,
+	query,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -38,15 +40,12 @@ googleProvider.setCustomParameters({
 });
 
 export const auth = getAuth();
-
 export const signInWithGooglePopup = () =>
 	signInWithPopup(auth, googleProvider);
-
 export const signInWithGoogleRedirect = () =>
 	signInWithRedirect(auth, googleProvider);
 
 export const db = getFirestore();
-
 export const addCollectionAndDocuments = async (
 	collectionKey,
 	objectsToAdd
@@ -61,6 +60,20 @@ export const addCollectionAndDocuments = async (
 
 	await batch.commit();
 	console.log("done");
+};
+
+export const getCategoriesAndDocuments = async () => {
+	const collectionRef = collection(db, "categories");
+	const q = query(collectionRef);
+
+	const querySnapshot = await getDocs(q);
+	const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+		const { title, items } = docSnapshot.data();
+		acc[title.toLowerCase()] = items;
+		return acc;
+	}, {});
+
+	return categoryMap;
 };
 
 export const createUserDocumentFromAuth = async (
@@ -92,19 +105,21 @@ export const createUserDocumentFromAuth = async (
 	return userDocRef;
 };
 
-export const signInAuthUserWithEmailAndPassword = async (email, password) => {
-	if (!email || !password) return;
-
-	return await signInWithEmailAndPassword(auth, email, password);
-};
-
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
 	if (!email || !password) return;
 
 	return await createUserWithEmailAndPassword(auth, email, password);
 };
 
+export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+	if (!email || !password) return;
+
+	return await signInWithEmailAndPassword(auth, email, password);
+};
+
 export const signOutUser = async () => await signOut(auth);
 
 export const onAuthStateChangedListener = (callback) =>
 	onAuthStateChanged(auth, callback);
+
+	
